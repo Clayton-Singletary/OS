@@ -1,0 +1,60 @@
+10.50.25.97
+stach #14
+
+Users - password:
+-----------------
+andy.dwyer - BurtMacklinFBI
+student - password
+garviel - luna
+bombadil - jolly
+
+**********************************************************************************************************************
+Day1 
+**********************************************************************************************************************
+POWERSHELL:
+-----------
+get-hosts                           
+get-hosts | select-object version   
+get-verb
+get-command
+get-command -type cmdlet | sort -property noun | ft -groupby noun
+**Ctrl+L to clear screen without using command**
+get-help <cmdlet>
+get-alias
+set-alias -name ip -value get-netipaddress **sets an alias for netipaddress to ip**not persistant**
+
+***get-process | Get-Member***
+
+(get-process).name                      **for one property**
+get-process | select name,id,path | ft  **for multiple properties**
+start-process notepad.exe
+stop-process -name notepad
+get-process | select name,id,path | ?{$_.id -lt '1000'} **id id is less than 1000 print name,id,path of process**
+(get-process | select name,id,path | ?{$_.id -lt '1000'}).count **to get the amount of them rather than a list**
+
+Classes:
+--------
+"Common Information Modules"
+get-cimclass *
+get-ciminstance -classame win32_logicakdisk
+get-ciminstance -classame win32_logicakdisk -filter "drivetype=3" | gm
+get-wmiobject -class win32_logicaldisk -filter "drivetype=3"
+
+More Random Stuff:
+------------------
+get-executionpolicy -list
+get-pssessionconfiguration
+get-childitem 'hklm:\software\microsoft\windows nt\currentversion\networklist\profiles\'
+winrm get winrm/config
+get-item wsman:\localhost\client\trustedhosts
+set-item wsman:\localhost\client\trustedhosts -value "file-server,domain-controll"
+invoke-command -computername file-server {get-service} **gets services on computer "file-server" 
+
+$session = new-pssession -computername File-Server
+invoke-command -session $session {get-service}         **^does the same but using a variable**
+enter-pssession -session $session   **uses a variable to remote into a system**
+$profile | get-member -type noteproperty
+
+**********************************************************************************************************************
+Day2 
+**********************************************************************************************************************
