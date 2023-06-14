@@ -1,4 +1,6 @@
-10.50.25.97
+usacys - UnitedStatesArmyCyberSchool *if username and password for local machine doesnt work*
+
+10.50.30.246
 stach #14
 
 Users - password:
@@ -56,5 +58,97 @@ enter-pssession -session $session   **uses a variable to remote into a system**
 $profile | get-member -type noteproperty
 
 **********************************************************************************************************************
-Day2 
+Day2 *IMPORTANT FOR FLEET*
 **********************************************************************************************************************
+Registry:
+---------
+powershell drives - PSDRIVE:
+new-PSDrive -name HKU -PSProvider Registry -Root HKEY_USERS **mounts a registry hive with psdrive**
+
+forensically relevent keys:
+* unternet url history
+* usb history
+* wireless access point history
+
+registry locations used or persistance:
+* HKLM\Software\Microsoft\Windows\CurrentVersion\Run
+* HKU\<SID>\Software\Microsoft\Windows\CurrentVersion\Run
+* HKLM\SYSTEM\CurrentControlSet\services
+* HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+* HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders
+* HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon
+
+S-1-5-18,S-1-5-19,S-1-5-20 are service accounts
+
+* HKLM\BCD00000000
+    Replacement of old boot.ini file
+* HKLM\SAM\SAM
+    Use "psexec -s -i regedit" from administrator cmd.exe to view the SAM
+* HKU\<SID>\Software\Policies\Microsoft\Windows\System\Scripts
+    Group policy Logon/Logoff Scripts defined here
+
+cmd.exe:
+--------
+ex:reg query hklm\software\microsoft\windows\currentversion\run
+   reg add hklm\software\microsoft\windows\currentversion\run /v testkey /t REG_SZ /d C:\windows\system32\WindowsPowershell\v1.0\powershell.exe
+   reg query hklm\software\microsoft\windows\currentversion\run
+   reg delete hklm\software\microsoft\wondows\currentversion\run /v testkey
+   
+powershell:
+-----------
+query:
+  get-childitem get-itemproprty get-item
+modify/destroy:
+  set-itemproperty remove-itemproperty
+create:
+  new-item new-itemproperty
+----------------------------------------
+Get-ChildItem HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\run 
+Get-Item HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\run
+
+new-item 'HKLM:\SOFTWARE\Microsoft\Office\14.0\security\trusted documents\trustrecords' -force
+
+Syntax:
+-------
+New-Item -Path $registryPath
+New-ItemProperty -Path $registryPath -Name $name -Value $value -PropertyType DWORD
+Get-Item -Path $registryPath
+Get-ItemProperty -Path $registryPath -Name $name
+Remove-ItemProperty -Path $registryPath -Name $name
+Remove-Item -Path $registryPath
+----------------------------------------------------------------------------------
+PSDrive:
+--------
+mkdir demo
+new-PSDrive -name demo -psprovider FileSystem -root C:\demo\
+cd demo:
+PS Demo:\>        **example of how to make and access a PS Drive**
+cd C:\ to exit
+
+get-psdrive **shows generated psdrives available**
+new-psdrive -name HKU -psprovider registry -root HKEY_USER **more examples**
+
+new-psdrive -name desktop -psprovider filesystem -root C:\users\student\desktop\
+cd desktop:
+cd C:\ to exit
+
+New-PSDrive -Name HKLM-Run -PSProvider Registry -Root HKEY_Local_Machine\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+cd HKLM-Run:
+cd:\ to exit
+
+[String]$WebDAVShare = '\\live.sysinternals.com\Tools'          
+New-PSDrive -Name S -PSProvider FileSystem -Root $WebDAVShare   
+cd S:
+
+New-PSDrive -Name FileServer -PSProvider FileSystem -Root "\\file-server\warrior share"
+
+Alternate Data Streams - ADS:
+-----------------------------
+PS C:\> echo "chow time is not long enough" > survey.txt
+PS C:\> gci .\survey.txt
+PS C:\> Get-FileHash .\survey.txt
+PS C:\> set-content .\survey.txt -value "chow time should be 4 hours long" -stream secret.info
+PS C:\> gci .\survey.txt
+PS C:\> Get-FileHash .\survey.txt
+PS C:\> get-item .\survey.txt -stream * **to see if there is an ADS
+PS C:\> get-content .\survey.txt -stream secret.info
