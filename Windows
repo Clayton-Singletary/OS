@@ -152,3 +152,8 @@ PS C:\> gci .\survey.txt
 PS C:\> Get-FileHash .\survey.txt
 PS C:\> get-item .\survey.txt -stream * **to see if there is an ADS
 PS C:\> get-content .\survey.txt -stream secret.info
+
+**********************************************************************************************************************
+Day 3
+**********************************************************************************************************************
+Boot Process:
