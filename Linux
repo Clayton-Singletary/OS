@@ -1,0 +1,67 @@
+ssh student@10.50.39.206 -X
+password
+
+**********************************************************************************************************************
+Day 1
+**********************************************************************************************************************
+Basics:
+-------
+which **to find file locations**
+hostname **to find name of linux box**
+whoami **to see who your signed in as**
+who **tells you whos all logged in on the box**
+
+Network Commands:
+-----------------
+ifconfig **to see certain network info on that box**
+ip neigh **to see mac addrs for device(s)**
+ip route/route **shows where the packets are passing threw**
+ss **shows established connections/ports**
+netstat **does the same as previous but more useful with other options TO.BE.CONT**
+  netstat -anop **shows executables connected to stuffs**
+sudo iptables -L **firewall rules**
+sudo -l **shows all commands user can use with admin privs**IMPORTANT**
+
+Help Commands:
+--------------
+<command> --help
+man <command>
+
+Variables:
+----------
+a="100" **no spaces**Making a variable**
+directories=$(ls -lisa) **command substitution**
+
+Redirections:
+-------------
+echo "text" > text.txt **places text in a file "overwrites file"**
+echo "text" >> test.txt **appends text to a file**
+echo random shit 2> text.txt **sends error messages to a file /dev/null to just dump them**
+
+Directories of Importance:
+--------------------------
+/ **root**
+/bin **holds commands**
+/sbin **system maintenance  executables**
+/home **users home directory**
+/usr **user bianaries**
+/etc **system configs**
+/var **variable data**
+/boot **everything with the boot process except configs**
+/dev **device files**
+/lib **kernel modules and shared libraries**
+/mnt **generic mount points**
+/proc **processes (pid)**
+/opt **?????**
+/media **removable media**
+
+Other Useful Commands:
+----------------------
+id **shows uid, gid, groups*
+cat /etc/passwd | grep student **shows etc/passwd entry for student**
+cat /etc/group | grep student **shows the groups that specified user is in**
+ls -lisa /bin/dd **shows permissions for command**
+
+**********************************************************************************************************************
+Day 2
+**********************************************************************************************************************
