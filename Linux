@@ -65,3 +65,14 @@ ls -lisa /bin/dd **shows permissions for command**
 **********************************************************************************************************************
 Day 2
 **********************************************************************************************************************
+Boot Proccess:
+https://git.cybbh.space/os/public/raw/master/images/sysV_systemd_boot_process.png
+
+SysV vs SystemD:
+https://git.cybbh.space/os/public/raw/master/images/summarize_diffs_of_sysv_and_systemd.JPG
+
+grub:
+Config File - /boot/grub/menu.lst
+
+runlevels:
+‘ls -l /etc/rc<1-6>.d’ to see different services run in each runlevel
