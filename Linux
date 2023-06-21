@@ -76,3 +76,11 @@ Config File - /boot/grub/menu.lst
 
 runlevels:
 ‘ls -l /etc/rc<1-6>.d’ to see different services run in each runlevel
+
+useful commands:
+sudo dmicode - gets system info (alot of it)
+sudo dmicode -t bios - gets bios info
+lsblk - gets storage device info
+sudo xxd -l 512 -g 1 /dev/vda - gets mbr("eb 63" is the start of the drive)
+
+ssh -J user@winops user@linux
