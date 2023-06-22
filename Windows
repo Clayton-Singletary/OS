@@ -326,3 +326,128 @@ bcdedit /set {bootmgr} timeout 29 (2)
 -----------------------------------------------------------------------------------------------------
 
 sc query spooler
+
+*********************************************************************************************************************************************************************************
+Day 4
+*********************************************************************************************************************************************************************************
+Process Validity:
+
+    Q: How do we discover Normal, abnormal, and Hidden Processes and Services?
+        Get-Process SMSS,CSRSS,LSASS | Sort -Property Id
+
+    Q: Do boot processes have descriptions?
+        Get-Process | Select Name, Id, Description | Sort -Property Id
+
+    Q: Where do the system processes and services normally run from? (C:\Windows\System32)
+        Get-Process | Select Name, Id, Path
+        Get-Ciminstance Win32_service | Select Name, Processid, Pathname
+
+    Q: Are Priority Levels of processes important?
+        Get-Process | Select Name, Priorityclass
+        Tasklist /m
+
+    Q: How would malware use Schedule Task?
+        schtasks /query | more
+        Get-ScheduledTask | Select * | Select -First 5
+-------------------------------------------------------------
+DEMO:
+
+    (different ways to look threw processes)
+get-process
+get-process | sort -property id | more
+get-process | select name, id, description | sort -property id | more
+get-process smss,csrss,lsass | sort -property id
+
+    (if chrome is running or substitute chrome for other running process)
+get-process chrome | foreach {$a} {$_.modules} | more
+get-process -name "*chrome*" | select-object -expandproperty modules | more
+get-process -name "*chrome*" | select-object -expandproperty modules | where-object modulename -like '*chrome*' | more
+
+    (more ways to look threw processes)
+get-ciminstance win32_process
+get-ciminstance win32_process | get-member                                                 *can possibly tell you the description but not always clear*
+get-ciminstance win32_process | select name, processid, parentprocessid                    *can be used to find strange executables spawning from strange executables*
+
+    (ways to look at services)
+get-ciminstance win32_service | select name, processid, pathname | ft -wrap | more         
+get-service alg | format-list *                                                            *shows a specified service*
+get-service | where-object {$_.status -eq "running"}                                       *shows currenty running services*
+get-scheduledtask | select * | select -first 1                                             *shows specifically the first scheduled task in the list*
+
+    (command prompt)
+tasklist
+tasklist /v
+tasklist /m | more
+tasklist /m /fi "imagename eq chrome.exe"
+tasklist /fo:list
+tasklist /fo:csv
+
+    (services)
+sc query
+sc queryex type=service | more
+sc queryex type=service state=inactive | more
+
+get-nettcpconnection -state established                                                    *shows established tcp connections*
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+User Account Control (not testable??)
+
+    Registry key is located at "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+
+    Red - Application or publisher blocked by group policy
+    Blue & gold - Administrative application
+    Blue - Trusted and Authenticode signed application
+    Yellow - Unsigned or signed but not trusted application
+
+    asInvoker - The application will run with the same permissions as the process that started it. The application can be elevated to a higher permission level by selecting Run as Administrator.
+
+    requireAdministrator - The application will run with administrator permissions.. The user who starts the application must be a member of the Administrators group. If the opening process is 
+    not running with administrative permissions, the system will prompt for credentials.
+
+    highestAvailable - The application will run with the highest permission level that it can. If the user who starts the application is a member of the Administrators group, this option is the
+    same as requireAdministrator. If the highest available permission level is higher than the level of the opening process, the system will prompt for credentials.
+
+    Some Windows executables can "auto elevate" without a prompt.
+-------------------------------------------------------------------
+    Does the file/binary/executable meet these conditions?
+
+        Auto Elvate is True
+            ./strings C:\Windows\System32\*.exe -accepteula | select-string -SimpleMatch "autoelevate"
+
+        Digitally Signed
+            ./sigcheck -m C:\Windows\System32\slui.exe -accepteula | Select-String -SimpleMatch "level"
+
+        Trusted Directory
+            i.e C:\Windows\System32
+-------------------------------------------------------------------
+DEMOS:
+
+DEMO: View file manifest settings
+
+    ( Map the Sysinternals Command in Powershell)
+PS C:\Users\student> net use * http://live.sysinternals.com
+PS C:\Users\student> z:
+
+    (View the autoelevate setting of slui)
+PS Z:\> ./sigcheck -m C:\Windows\System32\slui.exe
+
+    (View the highest available setting of regedit)
+PS Z:\> ./sigcheck -m C:\windows\regedit.exe
+
+    (How to locate Windows executables that have autoelevate in the manifest)
+PS Z:\> ./strings –s c:\windows\system32\*.exe | findstr /i autoelevate *didnt work for demo?*
+-----------------------------------------------------------------------------------------------------------------------------------------
+Sysinternals:
+
+DEMO: Using PPROCMON to Monitor the Windows Boot Process
+
+*Start up the Admin-Station Host and log in as andy.dwyer and open REGEDIT from their Search Bar and Go to HKLM\Software\Microsoft\Windows\CurrentVersion\Run.
+*Create a New String Value Called RunME and modify it with c:\windows\notepad.exe
+*Go to C:\SysinternalsSuite <Location may be different>
+    *Double-Click Procmon.exe. Accept Eula. Go to the File Tab and uncheck Capture Events. Go to the Options tab and Click on Enable Boot Logging.
+    *This will enable logging on System Boot. Select Every Second. Restart the System.
+*Once the System restarts, open and minimize notepad and then navigate to and double-click Procmon.exe to start it. It will ask to Save the log file.
+    *Save the log file to the Desktop. Once all of the Bootlog.pml files are saved, return to Procmon.
+    *If the .pml file does not automatically load, go to the File tab and click on OPEN and browse to our Desktop and select the ".pml" file to load.\
+*Click on the Tools tab and click on Process Tree.
+
