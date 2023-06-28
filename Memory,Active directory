@@ -1,0 +1,99 @@
+***************************************************************************************************************
+First Class Lesson
+***************************************************************************************************************
+Non-Persistant
+  RAM
+Persistant
+  HDD
+  USB
+
+Order of Volatility - the halflife of data:
+    CPU registers, cache
+    Routing table, ARP cache, process table, kernel stats, memory
+    Temporary file systems
+    Disk
+    Remote logging and monitoring data
+    Physical configuration, network topology
+    Archival media - backups
+
+Each operating system has its own memory acquisition tool called Persistent Memory (pmem):
+    Linpmem
+    Winpmem
+    OSXpmem
+
+Volatility Installation
+    Installing the Python version of Volatility
+        Download python < 3.0
+            Click "Add python to path"
+        Download Volatility from git
+        Run install: setup.py install
+Installation Cont.
+    Some dependencies are missing. Need to install:
+        diStorm3
+            click "distorm3-3.3.4.win-amd64.exe"
+        Visual C++ Compiler
+        pyCrypto or python -m pip install pycrypto
+        Yara for python 2.7
+        openpyxl: python -m pip install openpyxl
+        ujson: python -m pip install ujson
+Installation Fin.
+    Or download Volatility 2.6 Standalone
+        https://www.volatilityfoundation.org/26
+
+Acquiring Memory:
+    Demo
+        create image.sh
+        
+LIN Profile Creation:
+    cd ~/volatility/tools/linux
+    make profile
+    vol convert_profile <kernel_version>.zip ubuntu.json
+
+Interacting With A Memory Dump:
+    vol.py --profile=<profile> -f <path/to/mem/dump> <plugin>
+*******************************************************************************************
+DEMO:
+
+  powershell as admin:
+    cd c:\users\andy.dwyer\desktop\Memory_Analysis
+      .\volatility.exe -h **to get plug-ins**
+      .\volatility.exe -f .\cridex.vmem imageinfo **gets image info so you know what plug-in to use**
+      .\volatility.exe -f .\cridex.vmem --profile=WinXPSP2x86 -h
+      .\volatility.exe -f .\cridex.vmem --profile=WinXPSP2x86 pslist
+      .\volatility.exe -f .\cridex.vmem --profile=WinXPSP2x86 pstree
+      (might have to disable virus and threat protection from windows defender)
+      .\volatility.exe -f .\cridex.vmem --profile=WinXPSP2x86 procdump -p 1640 -D .
+      get-filehash .\executable.1640.exe
+      .\volatility.exe -f .\cridex.vmem --profile=WinXPSP2x86 memdump -p 1640 -D .
+      net use * http://live.sysinternals.com
+    cd z:
+      .\strings.exe -accepteula c:\users\andy.dwyer\desktop\memory_analysis\1640.dmp > 
+          c:\users\andy.dwyer\desktop\memory_analysis\1640.txt
+      open with notpadd++
+      use find(Ctrl+F) and regex to search
+    cd c:
+      .\volatility.exe -f .\cridex.vmem --profile=WinXPSP2x86 connections
+****************************************************************************************************************
+Secondary Class Lesson
+****************************************************************************************************************
+Active Directory Enumeration:
+
+    DSTOOLS:
+      DSADD
+      DSGET
+      DSMOD
+      DSMOVE
+      DSQUERY
+
+    PowerShell AD Commands
+    (VERB)-AD(NOUN)
+      Get-ADUser
+      New-ADUser -Name "Bad Guy" -PasswordNotRequired 1 -Path "OU=3RD LPT,OU=CCO,OU=3RDBN,OU=WARRIORS,DC=ARMY,DC=WARRIORS"
+******************************************************************
+
+  
+    
+
+
+
+    
