@@ -83,6 +83,8 @@ cron,schedtask,registry run keys,profiles
             C:\Users\andy.dwyer\AppData\Local\Google\Chrome\User Data\Default\
             **look at demo for Frequency,MostVisited,UserNames,ECT...**
 
+what starting mechanism? -schedtask,cronjob,ect...
+
 **remember cybercheffor decoding stuff**
 **Sysinternals**
     net use * 'http://live.sysinternals.com/tools'
