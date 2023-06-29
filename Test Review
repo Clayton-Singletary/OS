@@ -1,0 +1,44 @@
+2 boxes
+1 windows 1 linux
+4 hours
+only 3 attempts per question
+    after 1st wrong attempt raise hand to double check for fat fingering or rabit holes
+
+xfreerdp /u:andy.dwyer /v:<ip> /dynamic-resolution +glyph-cache +clipboard for windows -6 questions
+ssh <name@ip> for linux -4 questions
+
+---------------------------------------------------------------------------------------------------------
+
+look for connections processes
+look for persistance
+*********************************************************************************************************
+*********************************************************************************************************
+windows:
+netstat -anob
+    look at ports
+**get-nettcp ?**
+
+get-process **for processes**
+htop **!!**
+
+what starting mechanism? -schedtask,cronjob,ect...
+
+persistance:
+cron,schedtask,registry run keys,profiles
+
+net use * '\\live.sysinternals.com/tools'
+
+artifacts locations and how to read them
+cyberchef to read rot13
+---------------------------------------------------------------------------------------------------------
+linux:
+netstat -anop
+    look at ports
+
+ps -elf **for processes**
+htop **!!**
+
+what starting mechanism? -schedtask,cronjob,ect...
+
+persistance:
+cron,schedtask,profiles
